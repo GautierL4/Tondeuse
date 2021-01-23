@@ -15,9 +15,6 @@ object Main extends App {
     )
   val tondeuse = new Tondeuse(state, instructions)
   val newState: State = tondeuse.computeInstructions(environment)
-  println(newState.direction)
-  println(newState.position.x)
-  println(newState.position.y)
   val resultList: List[TondeuseResult] = List[TondeuseResult](
     TondeuseResult(
       tondeuse.start,
