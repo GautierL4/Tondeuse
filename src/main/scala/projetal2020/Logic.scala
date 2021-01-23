@@ -36,10 +36,32 @@ class Tondeuse(start: State, instructions: List[Action]) {
   }
 
   def moveRight(initState: State): State = {
-    State(Point(initState.position.x, initState.position.y), "E")
+    def defineDirection(currDirection: String): String =
+      currDirection match {
+        case "N" => "E"
+        case "E" => "S"
+        case "S" => "W"
+        case "W" => "N"
+        case _   => "E"
+      }
+    State(
+      Point(initState.position.x, initState.position.y),
+      defineDirection(initState.direction)
+    )
   }
 
   def moveLeft(initState: State): State = {
-    State(Point(initState.position.x, initState.position.y), "W")
+    def defineDirection(currDirection: String): String =
+      currDirection match {
+        case "N" => "W"
+        case "W" => "S"
+        case "S" => "E"
+        case "E" => "N"
+        case _   => "W"
+      }
+    State(
+      Point(initState.position.x, initState.position.y),
+      defineDirection(initState.direction)
+    )
   }
 }
