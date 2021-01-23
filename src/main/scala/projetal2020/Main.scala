@@ -2,9 +2,10 @@ package projetal2020
 
 object Main extends App {
   println("Ici le programme principal")
+  val environment = Point(5, 5)
   val point = Point(1, 2)
   val state = State(point, "N")
-  val actionFoward = MoveFoward("A")
+  val actionFoward = MoveForward("A")
   val actionRight = MoveRight("D")
   val actionLeft = MoveLeft("G")
   val instructions: List[Action] =
@@ -16,7 +17,7 @@ object Main extends App {
       actionLeft
     )
   val tondeuse = new Tondeuse(state, instructions)
-  val newState: State = tondeuse.computeInstructions()
+  val newState: State = tondeuse.computeInstructions(environment)
   println(newState.direction)
   println(newState.position.x)
   println(newState.position.y)

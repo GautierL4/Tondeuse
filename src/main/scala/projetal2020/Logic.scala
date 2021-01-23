@@ -12,25 +12,46 @@ case class MoveRight(code: String) extends Action
 
 case class MoveLeft(code: String) extends Action
 
-case class MoveFoward(code: String) extends Action
+case class MoveForward(code: String) extends Action
 
 class Tondeuse(start: State, instructions: List[Action]) {
-  def computeInstructions(): State = {
-    def computeInstruction(data: List[Action], state: State): State =
+  def computeInstructions(environment: Point): State = {
+    def computeInstruction(
+        data: List[Action],
+        state: State,
+        environment: Point
+    ): State =
       data match {
-        case MoveFoward(_) :: rest =>
-          computeInstruction(rest, moveFoward(state))
-        case MoveRight(_) :: rest => computeInstruction(rest, moveRight(state))
-        case MoveLeft(_) :: rest  => computeInstruction(rest, moveLeft(state))
-        case Nil                  => state
-        case _                    => state
+        case MoveForward(_) :: rest =>
+          computeInstruction(rest, moveForward(state, environment), environment)
+        case MoveRight(_) :: rest =>
+          computeInstruction(rest, moveRight(state), environment)
+        case MoveLeft(_) :: rest =>
+          computeInstruction(rest, moveLeft(state), environment)
+        case Nil => state
+        case _   => state
       }
-    computeInstruction(instructions, start)
+    computeInstruction(instructions, start, environment)
   }
 
-  def moveFoward(initState: State): State = {
+  def moveForward(initState: State, environment: Point): State = {
+    def checkMove(initState: State, environment: Point): Point =
+      initState.direction match {
+        case "N" =>
+          if (initState.position.y == environment.y) initState.position
+          else Point(initState.position.x, initState.position.y + 1)
+        case "S" =>
+          if (initState.position.y == 0) initState.position
+          else Point(initState.position.x, initState.position.y - 1)
+        case "E" =>
+          if (initState.position.x == environment.x) initState.position
+          else Point(initState.position.x + 1, initState.position.y)
+        case "W" =>
+          if (initState.position.x == 0) initState.position
+          else Point(initState.position.x - 1, initState.position.y)
+      }
     State(
-      Point(initState.position.x + 1, initState.position.y),
+      checkMove(initState, environment),
       initState.direction
     )
   }
