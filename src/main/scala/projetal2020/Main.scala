@@ -25,25 +25,22 @@ object Main extends App {
     s"Orientation: ${orientation_x.toString} , ${orientation_y.toString} , ${orientation_NEWS}"
   )
   val point = Point(orientation_x, orientation_y)
-  val state = State(point, orientation_NEWS)
+  //val state = State(point, orientation_NEWS)
 
-  // GAGAGAGAA ==> instructions
-  //data_from_file(2).toCharArray
-  val actionFoward = MoveFoward("A")
-  val actionRight = MoveRight("D")
-  val actionLeft = MoveLeft("G")
-
-  val instructions: List[Action] =
-    List[Action](
-      actionFoward,
-      actionFoward,
-      actionRight,
-      actionRight,
-      actionLeft
+  val environment = Point(5, 5)
+  val oldPoint = Point(1, 2)
+  val oldState = State(oldPoint, Direction.N)
+  val instructions: List[Action.Value] =
+    List[Action.Value](
+      Action.Forward,
+      Action.Forward,
+      Action.Right,
+      Action.Right,
+      Action.Left
     )
 
-  val tondeuse = new Tondeuse(state, instructions)
-  val newState: State = tondeuse.computeInstructions()
+  val tondeuse = new Tondeuse(oldState, instructions)
+  val newState: State = tondeuse.computeInstructions(environment)
   println(newState.direction)
   println(newState.position.x)
   println(newState.position.y)
