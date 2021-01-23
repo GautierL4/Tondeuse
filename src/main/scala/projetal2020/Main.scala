@@ -4,17 +4,17 @@ object Main extends App {
   println("Ici le programme principal")
   val environment = Point(5, 5)
   val point = Point(1, 2)
-  val state = State(point, "N")
-  val actionFoward = MoveForward("A")
-  val actionRight = MoveRight("D")
-  val actionLeft = MoveLeft("G")
-  val instructions: List[Action] =
-    List[Action](
-      actionFoward,
-      actionFoward,
-      actionRight,
-      actionRight,
-      actionLeft
+  val state = State(point, Direction.N)
+  val actionFoward = MoveForward('A')
+  val actionRight = MoveRight('D')
+  val actionLeft = MoveLeft('G')
+  val instructions: List[Action.Value] =
+    List[Action.Value](
+      Action.Forward,
+      Action.Forward,
+      Action.Right,
+      Action.Right,
+      Action.Left
     )
   val tondeuse = new Tondeuse(state, instructions)
   val newState: State = tondeuse.computeInstructions(environment)
