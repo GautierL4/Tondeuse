@@ -19,7 +19,6 @@ object Action extends Enumeration {
       case 'A' | 'D' | 'G' => true
       case _               => false
     }
-
 }
 
 case class Point(x: Int, y: Int)

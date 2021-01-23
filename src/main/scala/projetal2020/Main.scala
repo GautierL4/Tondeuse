@@ -19,16 +19,18 @@ object Main extends App {
   // 1 2 N ==> orientation
   val orientation_x: Int = data_from_file(1).split(" ")(0).toInt // récup 1
   val orientation_y: Int = data_from_file(1).split(" ")(1).toInt // récup 2
-  val orientation_NEWS: String = data_from_file(1).split(" ")(2) // récup "N"
+  val orientation_NEWS: Char =
+    data_from_file(1).split(" ")(2).charAt(0) // récup "N"
+  println(orientation_NEWS)
 
   println(
-    s"Orientation: ${orientation_x.toString} , ${orientation_y.toString} , ${orientation_NEWS}"
+    s"Orientation: ${orientation_x.toString} , ${orientation_y.toString} , ${orientation_NEWS.toString}"
   )
   val point = Point(orientation_x, orientation_y)
   //val state = State(point, orientation_NEWS)
 
-  val environment = Point(5, 5)
-  val oldPoint = Point(1, 2)
+  val environment = Point(xmax, ymax)
+  val oldPoint = Point(orientation_x, orientation_y)
   val oldState = State(oldPoint, Direction.N)
   val instructions: List[Action.Value] =
     List[Action.Value](
