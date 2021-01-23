@@ -1,48 +1,80 @@
 package projetal2020
 
-case class Point(x: Int, y: Int)
+object Direction extends Enumeration {
+  val N, E, W, S = Value
 
-case class State(position: Point, direction: String)
+  def isValid(code: Char): Boolean =
+    code match {
+      case 'N' | 'E' | 'W' | 'S' => true
+      case _                     => false
+    }
 
-trait Action {
-  def code: String
 }
 
-case class MoveRight(code: String) extends Action
+object Action extends Enumeration {
+  val Forward, Right, Left = Value
 
-case class MoveLeft(code: String) extends Action
+  def isValid(code: Char): Boolean =
+    code match {
+      case 'A' | 'D' | 'G' => true
+      case _               => false
+    }
 
-case class MoveFoward(code: String) extends Action
+}
 
-class Tondeuse(start: State, instructions: List[Action]) {
-  def computeInstructions(): State = {
-    def computeInstruction(data: List[Action], state: State): State =
+case class Point(x: Int, y: Int)
+
+case class State(position: Point, direction: Direction.Value)
+
+class Tondeuse(start: State, instructions: List[Action.Value]) {
+  def computeInstructions(environment: Point): State = {
+    def computeInstruction(
+        data: List[Action.Value],
+        state: State,
+        environment: Point
+    ): State =
       data match {
-        case MoveFoward(_) :: rest =>
-          computeInstruction(rest, moveFoward(state))
-        case MoveRight(_) :: rest => computeInstruction(rest, moveRight(state))
-        case MoveLeft(_) :: rest  => computeInstruction(rest, moveLeft(state))
-        case Nil                  => state
-        case _                    => state
+        case Action.Forward :: rest =>
+          computeInstruction(rest, moveForward(state, environment), environment)
+        case Action.Right :: rest =>
+          computeInstruction(rest, moveRight(state), environment)
+        case Action.Left :: rest =>
+          computeInstruction(rest, moveLeft(state), environment)
+        case Nil => state
+        case _   => state
       }
-    computeInstruction(instructions, start)
+    computeInstruction(instructions, start, environment)
   }
 
-  def moveFoward(initState: State): State = {
+  def moveForward(initState: State, environment: Point): State = {
+    def checkMove(initState: State, environment: Point): Point =
+      initState.direction match {
+        case Direction.N =>
+          if (initState.position.y == environment.y) initState.position
+          else Point(initState.position.x, initState.position.y + 1)
+        case Direction.S =>
+          if (initState.position.y == 0) initState.position
+          else Point(initState.position.x, initState.position.y - 1)
+        case Direction.E =>
+          if (initState.position.x == environment.x) initState.position
+          else Point(initState.position.x + 1, initState.position.y)
+        case Direction.W =>
+          if (initState.position.x == 0) initState.position
+          else Point(initState.position.x - 1, initState.position.y)
+      }
     State(
-      Point(initState.position.x + 1, initState.position.y),
+      checkMove(initState, environment),
       initState.direction
     )
   }
 
   def moveRight(initState: State): State = {
-    def defineDirection(currDirection: String): String =
+    def defineDirection(currDirection: Direction.Value): Direction.Value =
       currDirection match {
-        case "N" => "E"
-        case "E" => "S"
-        case "S" => "W"
-        case "W" => "N"
-        case _   => "E"
+        case Direction.N => Direction.E
+        case Direction.E => Direction.S
+        case Direction.S => Direction.W
+        case Direction.W => Direction.N
       }
     State(
       Point(initState.position.x, initState.position.y),
@@ -51,13 +83,12 @@ class Tondeuse(start: State, instructions: List[Action]) {
   }
 
   def moveLeft(initState: State): State = {
-    def defineDirection(currDirection: String): String =
+    def defineDirection(currDirection: Direction.Value): Direction.Value =
       currDirection match {
-        case "N" => "W"
-        case "W" => "S"
-        case "S" => "E"
-        case "E" => "N"
-        case _   => "W"
+        case Direction.N => Direction.W
+        case Direction.W => Direction.S
+        case Direction.S => Direction.E
+        case Direction.E => Direction.N
       }
     State(
       Point(initState.position.x, initState.position.y),
