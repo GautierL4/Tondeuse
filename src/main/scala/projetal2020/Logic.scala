@@ -12,7 +12,7 @@ object Direction extends Enumeration {
 }
 
 object Action extends Enumeration {
-  val Forward, Right, Left = Value
+  val A, D, G = Value
 
   def isValid(code: Char): Boolean =
     code match {
@@ -26,7 +26,14 @@ case class Point(x: Int, y: Int)
 
 case class State(position: Point, direction: Direction.Value)
 
-class Tondeuse(start: State, instructions: List[Action.Value]) {
+case class TondeuseResult(
+    debut: State,
+    instructions: List[Action.Value],
+    fin: State
+)
+
+class Tondeuse(val start: State, val instructions: List[Action.Value]) {
+
   def computeInstructions(environment: Point): State = {
     def computeInstruction(
         data: List[Action.Value],
@@ -34,11 +41,11 @@ class Tondeuse(start: State, instructions: List[Action.Value]) {
         environment: Point
     ): State =
       data match {
-        case Action.Forward :: rest =>
+        case Action.A :: rest =>
           computeInstruction(rest, moveForward(state, environment), environment)
-        case Action.Right :: rest =>
+        case Action.D :: rest =>
           computeInstruction(rest, moveRight(state), environment)
-        case Action.Left :: rest =>
+        case Action.G :: rest =>
           computeInstruction(rest, moveLeft(state), environment)
         case Nil => state
         case _   => state
