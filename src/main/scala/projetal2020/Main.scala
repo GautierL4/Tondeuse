@@ -5,9 +5,6 @@ object Main extends App {
   val environment = Point(5, 5)
   val point = Point(1, 2)
   val state = State(point, Direction.N)
-  val actionFoward = MoveForward('A')
-  val actionRight = MoveRight('D')
-  val actionLeft = MoveLeft('G')
   val instructions: List[Action.Value] =
     List[Action.Value](
       Action.Forward,
