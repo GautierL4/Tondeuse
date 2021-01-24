@@ -1,7 +1,16 @@
 package projetal2020
 
 object Main extends App {
-  println("Ici le programme principal")
+
+  val inputHandler: InputHandler = new InputHandler(
+    "in/input.txt"
+  )
+
+  val inputs: List[String] = inputHandler.readFile()
+  val environment: Point = inputHandler.getEnvironment(inputs(0))
+  val tondeuses: List[Tondeuse] = inputHandler.getTondeuses(inputs)
+
+  /*
   val environment = Point(5, 5)
   val point = Point(1, 2)
   val state = State(point, Direction.N)
@@ -15,21 +24,14 @@ object Main extends App {
     )
   val tondeuse = new Tondeuse(state, instructions)
   val newState: State = tondeuse.computeInstructions(environment)
-  val resultList: List[TondeuseResult] = List[TondeuseResult](
-    TondeuseResult(
-      tondeuse.start,
-      tondeuse.instructions,
-      tondeuse.computeInstructions(environment)
-    )
-  )
+   */
+
+  val logicHandler: LogicHandler = new LogicHandler(environment, tondeuses)
+  val resultList: List[TondeuseResult] = logicHandler.computeTondeusesResult()
+
   val result = ResultTemplate(environment, resultList)
   val output: OutputHandler = new OutputHandler(
     "out/output.json"
   )
   output.write(result)
-  // Le code suivant ne compilera pas.
-  // var tmp = null;
-  // var tmp2 = if (tmp == 1) "yes" else 1
-
-  // println(s"tmp: $tmp, tmp2: $tmp2")
 }

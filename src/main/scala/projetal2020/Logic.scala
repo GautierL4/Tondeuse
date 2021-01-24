@@ -9,6 +9,14 @@ object Direction extends Enumeration {
       case _                     => false
     }
 
+  def create(code: Char): Direction.Value =
+    code match {
+      case 'N' => N
+      case 'E' => E
+      case 'W' => W
+      case 'S' => S
+    }
+
 }
 
 object Action extends Enumeration {
@@ -18,6 +26,13 @@ object Action extends Enumeration {
     code match {
       case 'A' | 'D' | 'G' => true
       case _               => false
+    }
+
+  def create(code: Char): Action.Value =
+    code match {
+      case 'A' => A
+      case 'D' => D
+      case 'G' => G
     }
 
 }
@@ -31,6 +46,38 @@ case class TondeuseResult(
     instructions: List[Action.Value],
     fin: State
 )
+
+class LogicHandler(environment: Point, tondeuses: List[Tondeuse]) {
+
+  def computeTondeusesResult(): List[TondeuseResult] = {
+    def helper(
+        remainingTondeuse: List[Tondeuse],
+        environment: Point,
+        output: List[TondeuseResult]
+    ): List[TondeuseResult] =
+      remainingTondeuse match {
+        case head :: tail =>
+          helper(
+            tail,
+            environment,
+            output :+ computeTondeuseResult(head, environment)
+          )
+        case _ => output
+      }
+    helper(tondeuses, environment, List())
+  }
+
+  def computeTondeuseResult(
+      tondeuse: Tondeuse,
+      environment: Point
+  ): TondeuseResult = {
+    TondeuseResult(
+      tondeuse.start,
+      tondeuse.instructions,
+      tondeuse.computeInstructions(environment)
+    )
+  }
+}
 
 class Tondeuse(val start: State, val instructions: List[Action.Value]) {
 
