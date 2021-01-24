@@ -146,7 +146,6 @@ class InputHandler(filePath: String) {
   }
 
   def extractInstructions(instructionsLine: String): List[Action.Value] = {
-    val chars = instructionsLine.toList
     def helper(
         remainingInstructions: List[Char],
         output: List[Action.Value]
@@ -155,7 +154,7 @@ class InputHandler(filePath: String) {
         case head :: tail => helper(tail, output :+ validInstruction(head))
         case _            => output
       }
-    helper(chars, List())
+    helper(instructionsLine.toList, List())
   }
 
   def validInstruction(instruction: Char): Action.Value = {
