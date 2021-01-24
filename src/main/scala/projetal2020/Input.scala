@@ -97,6 +97,17 @@ class InputHandler(filePath: String) {
     )
   }
 
+  def splitSeparator(valueIndex: Int, string: String): String = {
+    try {
+      string.split(" ")(valueIndex)
+    } catch {
+      case _: Exception =>
+        throw new DonneesIncorectesException(
+          "Le format d'une des lignes n'est pas respecté (nombre de valeurs incorrect)"
+        )
+    }
+  }
+
   def getTondeuseStatePoint(stateLine: String, environnement: Point): Point = {
     try {
       Point(
@@ -106,7 +117,7 @@ class InputHandler(filePath: String) {
     } catch {
       case _: Exception =>
         throw new DonneesIncorectesException(
-          "Le point de départ de la tondeuse est invalide"
+          "Le point de départ d'une tondeuse est invalide"
         )
     }
   }
