@@ -52,4 +52,30 @@ class InputSpec extends AnyFunSuite {
     )
   }
 
+  test("invalid file format(missing tondeuse data)") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler.checkFormat(6)
+    )
+  }
+
+  test("invalid file format(incomplete first tondeuse)") {
+    assertThrows[DonneesIncorectesException](inputHandler.checkFormat(2))
+  }
+
+  test("invalid file format(no tondeuse)") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler.checkFormat(1)
+    )
+  }
+
+  test("can't read file") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler.getFile()
+    )
+  }
+
+  test("can't parse string to int") {
+    assertThrows[DonneesIncorectesException](inputHandler.parseInt("S"))
+  }
+
 }

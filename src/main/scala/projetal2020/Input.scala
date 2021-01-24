@@ -111,23 +111,16 @@ class InputHandler(filePath: String) {
   }
 
   def extractInstructions(instructionsLine: String): List[Action.Value] = {
-    try {
-      val chars = instructionsLine.toList
-      def helper(
-          remainingInstructions: List[Char],
-          output: List[Action.Value]
-      ): List[Action.Value] =
-        remainingInstructions match {
-          case head :: tail => helper(tail, output :+ validInstruction(head))
-          case _            => output
-        }
-      helper(chars, List())
-    } catch {
-      case _: Exception =>
-        throw new DonneesIncorectesException(
-          "Une des instructions fournis à une des toundeuses n'est pas valide"
-        )
-    }
+    val chars = instructionsLine.toList
+    def helper(
+        remainingInstructions: List[Char],
+        output: List[Action.Value]
+    ): List[Action.Value] =
+      remainingInstructions match {
+        case head :: tail => helper(tail, output :+ validInstruction(head))
+        case _            => output
+      }
+    helper(chars, List())
   }
 
   def validInstruction(instruction: Char): Action.Value = {
