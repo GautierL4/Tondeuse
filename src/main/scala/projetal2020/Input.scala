@@ -5,22 +5,43 @@ import better.files._
 @SuppressWarnings(Array("org.wartremover.warts.Throw"))
 class InputHandler(filePath: String) {
 
-  def readFile(): List[String] = {
-    val lines = File(filePath).lines.toList
-    if (lines.length % 2 == 0) {
+  def getFile(): List[String] = {
+    try {
+      File(filePath).lines.toList
+    } catch {
+      case _: Exception =>
+        throw new DonneesIncorectesException(
+          "Impossible de récupérer le contenu du fichier, vérifier le format ou l'emplacement du fichier"
+        )
+    }
+  }
+
+  def checkFormat(lineCount: Int): Boolean = {
+    if (lineCount % 2 == 0) {
       throw new DonneesIncorectesException(
         "Nombre de ligne incorrect : Données de tondeuse possiblement incomplète"
       )
-    } else if (lines.length < 2) {
+    } else if (lineCount < 2) {
       throw new DonneesIncorectesException(
         "Données de la première tondeuse incomplète"
       )
-    } else if (lines.length < 1) {
+    } else if (lineCount < 1) {
       throw new DonneesIncorectesException(
         "Aucune tondeuse"
       )
     } else {
+      true
+    }
+  }
+
+  def readFile(): List[String] = {
+    val lines: List[String] = getFile()
+    if (checkFormat(lines.length)) {
       lines
+    } else {
+      throw new DonneesIncorectesException(
+        "Le format du fichier n'est pas correct"
+      )
     }
   }
 
@@ -36,10 +57,18 @@ class InputHandler(filePath: String) {
   }
 
   def getEnvironment(firstLine: String): Point = {
-    Point(
-      parseInt(firstLine.split(" ")(0)),
-      parseInt(firstLine.split(" ")(1))
-    )
+    try {
+      Point(
+        parseInt(firstLine.split(" ")(0)),
+        parseInt(firstLine.split(" ")(1))
+      )
+    } catch {
+      case _: Exception =>
+        throw new DonneesIncorectesException(
+          "Le format de la ligne environnement n'est pas correst"
+        )
+    }
+
   }
 
   def getTondeuses(data: List[String]): List[Tondeuse] = {
@@ -58,24 +87,27 @@ class InputHandler(filePath: String) {
   }
 
   def getTondeuse(stateLine: String, instructionsLine: String): Tondeuse = {
-    new Tondeuse(
-      State(
-        Point(
-          parseInt(stateLine.split(" ")(0)),
-          parseInt(stateLine.split(" ")(1))
+    try {
+      new Tondeuse(
+        State(
+          Point(
+            parseInt(stateLine.split(" ")(0)),
+            parseInt(stateLine.split(" ")(1))
+          ),
+          validDirection(stateLine.split(" ")(2)(0))
         ),
-        validDirection(stateLine.split(" ")(2)(0))
-      ),
-      extractInstructions(instructionsLine)
-    )
+        extractInstructions(instructionsLine)
+      )
+    } catch {
+      case _: Exception =>
+        throw new DonneesIncorectesException(
+          "Le format de la ligne correspondant à l'état de la tondeuse est incorrect"
+        )
+    }
   }
 
   def validDirection(direction: Char): Direction.Value = {
-    if (Direction.isValid(direction)) Direction.create(direction)
-    else
-      throw new DonneesIncorectesException(
-        "La direction initial d'une tondeuse n'est pas valide"
-      )
+    Direction.create(direction)
   }
 
   def extractInstructions(instructionsLine: String): List[Action.Value] = {
@@ -99,11 +131,7 @@ class InputHandler(filePath: String) {
   }
 
   def validInstruction(instruction: Char): Action.Value = {
-    if (Action.isValid(instruction)) Action.create(instruction)
-    else
-      throw new DonneesIncorectesException(
-        "Une des instruction d'une tondeuse n'est pas valide"
-      )
+    Action.create(instruction)
   }
 
 }
