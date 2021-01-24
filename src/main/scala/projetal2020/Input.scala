@@ -7,7 +7,6 @@ class InputHandler(filePath: String) {
 
   def readFile(): List[String] = {
     val lines = File(filePath).lines.toList
-    println(lines.length)
     if (lines.length % 2 == 0) {
       throw new DonneesIncorectesException(
         "Nombre de ligne incorrect : Données de tondeuse possiblement incomplète"
