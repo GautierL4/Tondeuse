@@ -3,18 +3,17 @@ package projetal2020
 object Direction extends Enumeration {
   val N, E, W, S = Value
 
-  def isValid(code: Char): Boolean =
-    code match {
-      case 'N' | 'E' | 'W' | 'S' => true
-      case _                     => false
-    }
-
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def create(code: Char): Direction.Value =
     code match {
       case 'N' => N
       case 'E' => E
       case 'W' => W
       case 'S' => S
+      case _ =>
+        throw new DonneesIncorectesException(
+          "La direction demandé n'est pas pris en charge"
+        )
     }
 
 }
@@ -22,17 +21,16 @@ object Direction extends Enumeration {
 object Action extends Enumeration {
   val A, D, G = Value
 
-  def isValid(code: Char): Boolean =
-    code match {
-      case 'A' | 'D' | 'G' => true
-      case _               => false
-    }
-
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def create(code: Char): Action.Value =
     code match {
       case 'A' => A
       case 'D' => D
       case 'G' => G
+      case _ =>
+        throw new DonneesIncorectesException(
+          "L'action demandé n'est pas pris en charge"
+        )
     }
 
 }
