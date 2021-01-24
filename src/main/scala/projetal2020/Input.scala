@@ -65,13 +65,13 @@ class InputHandler(filePath: String) {
     } catch {
       case _: Exception =>
         throw new DonneesIncorectesException(
-          "Le format de la ligne environnement n'est pas correst"
+          "Le format de la ligne environnement n'est pas correct"
         )
     }
 
   }
 
-  def getTondeuses(data: List[String]): List[Tondeuse] = {
+  def getTondeuses(data: List[String], environnement: Point): List[Tondeuse] = {
     def readLine(
         remainingElement: List[String],
         output: List[Tondeuse],
@@ -79,31 +79,52 @@ class InputHandler(filePath: String) {
     ): List[Tondeuse] =
       remainingElement match {
         case head :: tail if (index % 2 != 0 && index != 0) =>
-          readLine(tail, output :+ getTondeuse(head, tail(0)), index + 1)
+          readLine(
+            tail,
+            output :+ getTondeuse(head, tail(0), environnement),
+            index + 1
+          )
         case _ :: tail => readLine(tail, output, index + 1)
         case _         => output
       }
     readLine(data, List(), 0)
   }
 
-  def getTondeuse(stateLine: String, instructionsLine: String): Tondeuse = {
+  def getTondeuseState(stateLine: String, environnement: Point): State = {
+    State(
+      getTondeuseStatePoint(stateLine, environnement),
+      validDirection(stateLine.split(" ")(2)(0))
+    )
+  }
+
+  def getTondeuseStatePoint(stateLine: String, environnement: Point): Point = {
     try {
-      new Tondeuse(
-        State(
-          Point(
-            parseInt(stateLine.split(" ")(0)),
-            parseInt(stateLine.split(" ")(1))
-          ),
-          validDirection(stateLine.split(" ")(2)(0))
-        ),
-        extractInstructions(instructionsLine)
+      Point(
+        checkValidPosition(parseInt(stateLine.split(" ")(0)), environnement.x),
+        checkValidPosition(parseInt(stateLine.split(" ")(1)), environnement.y)
       )
     } catch {
       case _: Exception =>
         throw new DonneesIncorectesException(
-          "Le format de la ligne correspondant à l'état de la tondeuse est incorrect"
+          "Le point de départ de la tondeuse est invalide"
         )
     }
+  }
+
+  def checkValidPosition(position: Int, limit: Int): Int = {
+    if (position <= limit) position
+    else throw new DonneesIncorectesException("")
+  }
+
+  def getTondeuse(
+      stateLine: String,
+      instructionsLine: String,
+      environnement: Point
+  ): Tondeuse = {
+    new Tondeuse(
+      getTondeuseState(stateLine, environnement),
+      extractInstructions(instructionsLine)
+    )
   }
 
   def validDirection(direction: Char): Direction.Value = {

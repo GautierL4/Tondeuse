@@ -24,31 +24,36 @@ class InputSpec extends AnyFunSuite {
 
   test("Should fail reading tondeuse(Bad State Format)") {
     assertThrows[DonneesIncorectesException](
-      inputHandler.getTondeuse("55N", "AGAGAGA")
+      inputHandler
+        .getTondeuse("55N", "AGAGAGA", inputHandler.getEnvironment("5 5"))
     )
   }
 
   test("Should fail reading tondeuse(Bad State point)") {
     assertThrows[DonneesIncorectesException](
-      inputHandler.getTondeuse("5 B N", "AGAGAGA")
+      inputHandler
+        .getTondeuse("5 B N", "AGAGAGA", inputHandler.getEnvironment("5 5"))
     )
   }
 
   test("Should fail reading tondeuse(Bad State direction)") {
     assertThrows[DonneesIncorectesException](
-      inputHandler.getTondeuse("5 5 G", "AGAGAGA")
+      inputHandler
+        .getTondeuse("5 5 G", "AGAGAGA", inputHandler.getEnvironment("5 5"))
     )
   }
 
   test("Should fail reading tondeuse(Bad instruction format") {
     assertThrows[DonneesIncorectesException](
-      inputHandler.getTondeuse("5 5 N", "A G A GA")
+      inputHandler
+        .getTondeuse("5 5 N", "A G A GA", inputHandler.getEnvironment("5 5"))
     )
   }
 
   test("Should fail reading tondeuse(Bad instruction code)") {
     assertThrows[DonneesIncorectesException](
-      inputHandler.getTondeuse("5 5 N", "AGAP")
+      inputHandler
+        .getTondeuse("5 5 N", "AGAP", inputHandler.getEnvironment("5 5"))
     )
   }
 
@@ -76,6 +81,27 @@ class InputSpec extends AnyFunSuite {
 
   test("can't parse string to int") {
     assertThrows[DonneesIncorectesException](inputHandler.parseInt("S"))
+  }
+
+  test("Should fail reading tondeuse(Bad start state first case)") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler
+        .getTondeuse("5 5 N", "AGAGA", inputHandler.getEnvironment("4 4"))
+    )
+  }
+
+  test("Should fail reading tondeuse(Bad start state second case)") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler
+        .getTondeuse("5 5 N", "AGAGA", inputHandler.getEnvironment("5 4"))
+    )
+  }
+
+  test("Should fail reading tondeuse(Bad start state third case") {
+    assertThrows[DonneesIncorectesException](
+      inputHandler
+        .getTondeuse("5 5 N", "AGAGA", inputHandler.getEnvironment("4 5"))
+    )
   }
 
 }

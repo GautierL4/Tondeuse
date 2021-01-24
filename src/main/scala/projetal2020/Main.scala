@@ -8,7 +8,7 @@ object Main extends App {
 
   val inputs: List[String] = inputHandler.readFile()
   val environment: Point = inputHandler.getEnvironment(inputs(0))
-  val tondeuses: List[Tondeuse] = inputHandler.getTondeuses(inputs)
+  val tondeuses: List[Tondeuse] = inputHandler.getTondeuses(inputs, environment)
 
   /*
   val environment = Point(5, 5)
