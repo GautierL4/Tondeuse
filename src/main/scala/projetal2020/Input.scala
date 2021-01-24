@@ -47,11 +47,12 @@ class InputHandler(filePath: String) {
 
   def parseInt(s: String): Int = {
     try {
-      s.toInt
+      val int: Int = s.toInt
+      if (int > 0) int else throw new DonneesIncorectesException("")
     } catch {
       case _: Exception =>
         throw new DonneesIncorectesException(
-          "Une de vos valeurs est incorrect (Valeurs numérique attendu)"
+          "Une de vos valeurs est incorrect (Valeurs numérique positive attendu)"
         )
     }
   }
@@ -59,8 +60,8 @@ class InputHandler(filePath: String) {
   def getEnvironment(firstLine: String): Point = {
     try {
       Point(
-        parseInt(firstLine.split(" ")(0)),
-        parseInt(firstLine.split(" ")(1))
+        parseInt(splitSeparator(0, firstLine)),
+        parseInt(splitSeparator(1, firstLine))
       )
     } catch {
       case _: Exception =>
@@ -93,27 +94,40 @@ class InputHandler(filePath: String) {
   def getTondeuseState(stateLine: String, environnement: Point): State = {
     State(
       getTondeuseStatePoint(stateLine, environnement),
-      validDirection(stateLine.split(" ")(2)(0))
+      validDirection(splitSeparator(2, stateLine)(0))
     )
   }
 
-  def getTondeuseStatePoint(stateLine: String, environnement: Point): Point = {
+  def splitSeparator(valueIndex: Int, string: String): String = {
     try {
-      Point(
-        checkValidPosition(parseInt(stateLine.split(" ")(0)), environnement.x),
-        checkValidPosition(parseInt(stateLine.split(" ")(1)), environnement.y)
-      )
+      string.split(" ")(valueIndex)
     } catch {
       case _: Exception =>
         throw new DonneesIncorectesException(
-          "Le point de départ de la tondeuse est invalide"
+          "Le format d'une des lignes n'est pas respecté (nombre de valeurs incorrect)"
         )
     }
   }
 
+  def getTondeuseStatePoint(stateLine: String, environnement: Point): Point = {
+    Point(
+      checkValidPosition(
+        parseInt(splitSeparator(0, stateLine)),
+        environnement.x
+      ),
+      checkValidPosition(
+        parseInt(splitSeparator(1, stateLine)),
+        environnement.y
+      )
+    )
+  }
+
   def checkValidPosition(position: Int, limit: Int): Int = {
     if (position <= limit) position
-    else throw new DonneesIncorectesException("")
+    else
+      throw new DonneesIncorectesException(
+        "Le point de départ d'une tondeuse est invalide"
+      )
   }
 
   def getTondeuse(
