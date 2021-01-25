@@ -1,6 +1,7 @@
 package projetal2020
 
 import better.files._
+import annotation.tailrec
 
 @SuppressWarnings(Array("org.wartremover.warts.Throw"))
 class InputHandler(filePath: String) {
@@ -73,6 +74,7 @@ class InputHandler(filePath: String) {
   }
 
   def getTondeuses(data: List[String], environnement: Point): List[Tondeuse] = {
+    @tailrec
     def readLine(
         remainingElement: List[String],
         output: List[Tondeuse],
@@ -86,7 +88,7 @@ class InputHandler(filePath: String) {
             index + 1
           )
         case _ :: tail => readLine(tail, output, index + 1)
-        case _         => output
+        case Nil       => output
       }
     readLine(data, List(), 0)
   }
@@ -146,13 +148,14 @@ class InputHandler(filePath: String) {
   }
 
   def extractInstructions(instructionsLine: String): List[Action.Value] = {
+    @tailrec
     def helper(
         remainingInstructions: List[Char],
         output: List[Action.Value]
     ): List[Action.Value] =
       remainingInstructions match {
         case head :: tail => helper(tail, output :+ validInstruction(head))
-        case _            => output
+        case Nil          => output
       }
     helper(instructionsLine.toList, List())
   }
