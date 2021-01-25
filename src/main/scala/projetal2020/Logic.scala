@@ -1,5 +1,7 @@
 package projetal2020
 
+import annotation.tailrec
+
 object Direction extends Enumeration {
   val N, E, W, S = Value
 
@@ -48,6 +50,7 @@ case class TondeuseResult(
 class LogicHandler(environment: Point, tondeuses: List[Tondeuse]) {
 
   def computeTondeusesResult(): List[TondeuseResult] = {
+    @tailrec
     def helper(
         remainingTondeuse: List[Tondeuse],
         environment: Point,
@@ -60,7 +63,7 @@ class LogicHandler(environment: Point, tondeuses: List[Tondeuse]) {
             environment,
             output :+ computeTondeuseResult(head, environment)
           )
-        case _ => output
+        case Nil => output
       }
     helper(tondeuses, environment, List())
   }
@@ -80,6 +83,7 @@ class LogicHandler(environment: Point, tondeuses: List[Tondeuse]) {
 class Tondeuse(val start: State, val instructions: List[Action.Value]) {
 
   def computeInstructions(environment: Point): State = {
+    @tailrec
     def computeInstruction(
         data: List[Action.Value],
         state: State,
@@ -98,27 +102,37 @@ class Tondeuse(val start: State, val instructions: List[Action.Value]) {
     computeInstruction(instructions, start, environment)
   }
 
-  def moveForward(initState: State, environment: Point): State = {
-    def checkMove(initState: State, environment: Point): Point =
-      initState.direction match {
-        case Direction.N =>
-          if (initState.position.y == environment.y) initState.position
-          else Point(initState.position.x, initState.position.y + 1)
-        case Direction.S =>
-          if (initState.position.y == 0) initState.position
-          else Point(initState.position.x, initState.position.y - 1)
-        case Direction.E =>
-          if (initState.position.x == environment.x) initState.position
-          else Point(initState.position.x + 1, initState.position.y)
-        case Direction.W =>
-          if (initState.position.x == 0) initState.position
-          else Point(initState.position.x - 1, initState.position.y)
-      }
-    State(
-      checkMove(initState, environment),
-      initState.direction
-    )
-  }
+  def moveForward(initState: State, environment: Point): State =
+    initState.direction match {
+      case Direction.N =>
+        if (initState.position.y == environment.y) initState
+        else
+          State(
+            Point(initState.position.x, initState.position.y + 1),
+            initState.direction
+          )
+      case Direction.S =>
+        if (initState.position.y == 0) initState
+        else
+          State(
+            Point(initState.position.x, initState.position.y - 1),
+            initState.direction
+          )
+      case Direction.E =>
+        if (initState.position.x == environment.x) initState
+        else
+          State(
+            Point(initState.position.x + 1, initState.position.y),
+            initState.direction
+          )
+      case Direction.W =>
+        if (initState.position.x == 0) initState
+        else
+          State(
+            Point(initState.position.x - 1, initState.position.y),
+            initState.direction
+          )
+    }
 
   def moveRight(initState: State): State = {
     def defineDirection(currDirection: Direction.Value): Direction.Value =
