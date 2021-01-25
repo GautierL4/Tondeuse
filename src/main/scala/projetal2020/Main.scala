@@ -10,22 +10,6 @@ object Main extends App {
   val environment: Point = inputHandler.getEnvironment(inputs(0))
   val tondeuses: List[Tondeuse] = inputHandler.getTondeuses(inputs, environment)
 
-  /*
-  val environment = Point(5, 5)
-  val point = Point(1, 2)
-  val state = State(point, Direction.N)
-  val instructions: List[Action.Value] =
-    List[Action.Value](
-      Action.A,
-      Action.A,
-      Action.D,
-      Action.D,
-      Action.G
-    )
-  val tondeuse = new Tondeuse(state, instructions)
-  val newState: State = tondeuse.computeInstructions(environment)
-   */
-
   val logicHandler: LogicHandler = new LogicHandler(environment, tondeuses)
   val resultList: List[TondeuseResult] = logicHandler.computeTondeusesResult()
 
